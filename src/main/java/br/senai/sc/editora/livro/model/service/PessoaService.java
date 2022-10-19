@@ -2,6 +2,7 @@ package br.senai.sc.editora.livro.model.service;
 
 import br.senai.sc.editora.livro.model.entities.Pessoa;
 import br.senai.sc.editora.livro.repository.PessoaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,11 +10,8 @@ import java.util.Optional;
 
 @Service
 public class PessoaService {
+    @Autowired
     private PessoaRepository pessoaRepository;
-
-    public PessoaService(PessoaRepository pessoaRepository){
-        this.pessoaRepository = pessoaRepository;
-    }
 
     public List<Pessoa> findAll() {
         return pessoaRepository.findAll();

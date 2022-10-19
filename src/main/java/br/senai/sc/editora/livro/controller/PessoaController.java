@@ -5,6 +5,7 @@ import br.senai.sc.editora.livro.model.entities.Pessoa;
 import br.senai.sc.editora.livro.model.service.PessoaService;
 import com.fasterxml.jackson.databind.util.BeanUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,11 +19,9 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/editoralivros/pessoa")
 public class PessoaController {
-    private PessoaService pessoaService;
 
-    public PessoaController(PessoaService pessoaService) {
-        this.pessoaService = pessoaService;
-    }
+    @Autowired
+    private PessoaService pessoaService;
 
     @GetMapping
     public ResponseEntity<List<Pessoa>> findAll() {
@@ -30,20 +29,20 @@ public class PessoaController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> save(@RequestBody @Valid PessoaDTO pessoaDTO) {
+    public ResponseEntity<Object> save(@RequestBody @Valid PessoaDTO pessoaDto) {
 
-        Optional<Pessoa> optionalPerson = pessoaService.findById(pessoaDTO.getCPF());
-
-        if (pessoaService.existsById(pessoaDTO.getCPF())) {
+        if (pessoaService.existsById(pessoaDto.getCpf())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Pessoa já cadastrada");
         }
 
-        if (pessoaService.existByEmail(pessoaDTO.getEmail())) {
+        if (pessoaService.existByEmail(pessoaDto.getEmail())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email já cadastrado");
         }
 
         Pessoa pessoa = new Pessoa();
-        BeanUtils.copyProperties(pessoaDTO, pessoa);
+        BeanUtils.copyProperties(pessoaDto, pessoa);
+
+        pessoaService.save(pessoa);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(pessoa);
     }
