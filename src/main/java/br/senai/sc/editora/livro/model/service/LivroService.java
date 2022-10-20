@@ -1,8 +1,10 @@
 package br.senai.sc.editora.livro.model.service;
 
+import br.senai.sc.editora.livro.model.entities.Autor;
 import br.senai.sc.editora.livro.model.entities.Livro;
 import br.senai.sc.editora.livro.model.entities.Status;
 import br.senai.sc.editora.livro.repository.LivroRepository;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,8 +30,8 @@ public class LivroService {
         return livroRepository.findByStatus(status);
     }
 
-    public List<Livro> findByAutor(Long cpfAutor) {
-        return livroRepository.findByAutor(cpfAutor);
+    public List<Livro> findByAutor(Autor autor) {
+        return livroRepository.findByAutores(autor);
     }
 
     public boolean existsById(Long isbn) {

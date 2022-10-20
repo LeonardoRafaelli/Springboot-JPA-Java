@@ -19,9 +19,14 @@ public class Livro {
     @Column(name = "titulo", length = 80, nullable = false)
     private String titulo;
 
-    @ManyToOne
-    @JoinColumn(name = "cpf_autor")
-    private Autor autor;
+    @ManyToMany
+    @JoinTable(name = "livro_autor",
+            joinColumns =
+            @JoinColumn(name = "isbn_livro", nullable = false),
+            inverseJoinColumns =
+            @JoinColumn(name = "cpf_autor", nullable = false)
+    )
+    private List<Autor> autores;
 
     @ManyToOne
     @JoinColumn(name = "cpf_revisor")

@@ -1,12 +1,17 @@
 package br.senai.sc.editora.livro.controller;
 
 import br.senai.sc.editora.livro.dto.LivroDTO;
+import br.senai.sc.editora.livro.model.entities.Autor;
 import br.senai.sc.editora.livro.model.entities.Livro;
+import br.senai.sc.editora.livro.model.entities.Pessoa;
 import br.senai.sc.editora.livro.model.entities.Status;
+import br.senai.sc.editora.livro.model.factory.PessoaFactory;
 import br.senai.sc.editora.livro.model.service.LivroService;
+import br.senai.sc.editora.livro.model.service.PessoaService;
 import org.apache.coyote.Response;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,14 +28,20 @@ public class LivroController {
     @Autowired
     private LivroService livroService;
 
+    @Autowired
+    private PessoaService pessoaService;
+
     @PostMapping
     public ResponseEntity<Object> save (@RequestBody @Valid LivroDTO livroDto) {
 
-        System.out.println("Post called");
-        System.out.println(livroDto.toString());
-
         if(livroService.existsById(livroDto.getIsbn())){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("ISBN já cadastrado!");
+        }
+
+        for(int i = 0; i < livroDto.getAutores().size(); i++){
+            if(!pessoaService.existsById(livroDto.getAutores().get(i).getCpf())){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Autor com CPF: " + livroDto.getAutores().get(i).getCpf() + " não encontrado!");
+            }
         }
 
         Livro livro = new Livro();
@@ -62,9 +73,10 @@ public class LivroController {
     }
 
     @GetMapping("/autor/{cpfAutor}")
-    public ResponseEntity<List<Livro>> findByAutor (@PathVariable (value = "cpfAutor") Long cpfAutor){
+    public ResponseEntity<List<Livro>> findByAutor (@PathVariable (value = "cpfAutor") Autor autor){
+
         return ResponseEntity.status(HttpStatus.FOUND).body(
-                livroService.findByAutor(cpfAutor)
+                livroService.findByAutor(autor)
         );
     }
 

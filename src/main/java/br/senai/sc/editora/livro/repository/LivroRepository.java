@@ -1,5 +1,6 @@
 package br.senai.sc.editora.livro.repository;
 
+import br.senai.sc.editora.livro.model.entities.Autor;
 import br.senai.sc.editora.livro.model.entities.Livro;
 import br.senai.sc.editora.livro.model.entities.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,6 @@ import java.util.List;
 public interface LivroRepository extends JpaRepository<Livro, Long> {
 
     List<Livro> findByStatus(Status status);
+    List<Livro> findByAutores(Autor autor);
 
-    List<Livro> findByAutor(Long cpfAutor);
 }

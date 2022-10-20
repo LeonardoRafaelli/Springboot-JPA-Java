@@ -1,7 +1,11 @@
 package br.senai.sc.editora.livro.controller;
 
 import br.senai.sc.editora.livro.dto.PessoaDTO;
+import br.senai.sc.editora.livro.model.entities.Autor;
+import br.senai.sc.editora.livro.model.entities.Diretor;
 import br.senai.sc.editora.livro.model.entities.Pessoa;
+import br.senai.sc.editora.livro.model.entities.Revisor;
+import br.senai.sc.editora.livro.model.factory.PessoaFactory;
 import br.senai.sc.editora.livro.model.service.PessoaService;
 import com.fasterxml.jackson.databind.util.BeanUtil;
 import org.springframework.beans.BeanUtils;
@@ -28,8 +32,18 @@ public class PessoaController {
         return ResponseEntity.ok(pessoaService.findAll());
     }
 
-    @PostMapping
-    public ResponseEntity<Object> save(@RequestBody @Valid PessoaDTO pessoaDto) {
+    @PostMapping("/{tipoPessoa}")
+    public ResponseEntity<Object> save(
+            @RequestBody @Valid PessoaDTO pessoaDto,
+            @PathVariable(value = "tipoPessoa") int tipoPessoa
+    ) {
+        //Autor
+        //Revisor
+        //Diretor
+
+        Pessoa pessoa = PessoaFactory.getDType(tipoPessoa);
+
+        BeanUtils.copyProperties(pessoaDto, pessoa);
 
         if (pessoaService.existsById(pessoaDto.getCpf())) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Pessoa já cadastrada");
@@ -39,8 +53,8 @@ public class PessoaController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email já cadastrado");
         }
 
-        Pessoa pessoa = new Pessoa();
-        BeanUtils.copyProperties(pessoaDto, pessoa);
+
+
 
         pessoaService.save(pessoa);
 
