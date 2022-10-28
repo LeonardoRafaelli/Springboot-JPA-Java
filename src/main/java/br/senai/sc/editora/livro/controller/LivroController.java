@@ -13,6 +13,10 @@ import org.apache.coyote.Response;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -62,6 +66,11 @@ public class LivroController {
     @GetMapping
     public ResponseEntity<List<Livro>> findAll(){
         return ResponseEntity.ok(livroService.findAll());
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<Livro>> findAllPage(@PageableDefault(size = 9, sort = "isbn", direction = Sort.Direction.ASC) Pageable pageable){
+        return ResponseEntity.ok(livroService.findAll(pageable));
     }
 
     @GetMapping("/{isbn}")

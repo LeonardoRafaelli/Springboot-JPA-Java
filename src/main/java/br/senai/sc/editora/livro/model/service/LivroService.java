@@ -4,9 +4,9 @@ import br.senai.sc.editora.livro.model.entities.Autor;
 import br.senai.sc.editora.livro.model.entities.Livro;
 import br.senai.sc.editora.livro.model.entities.Status;
 import br.senai.sc.editora.livro.repository.LivroRepository;
-import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,5 +40,8 @@ public class LivroService {
 
     public List<Livro> findAll() {
         return livroRepository.findAll();
+    }
+    public Page<Livro> findAll(Pageable pageable) {
+        return livroRepository.findAll(pageable);
     }
 }
