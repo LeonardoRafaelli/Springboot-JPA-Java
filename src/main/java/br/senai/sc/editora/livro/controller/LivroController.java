@@ -8,6 +8,7 @@ import br.senai.sc.editora.livro.model.entities.Status;
 import br.senai.sc.editora.livro.model.factory.PessoaFactory;
 import br.senai.sc.editora.livro.model.service.LivroService;
 import br.senai.sc.editora.livro.model.service.PessoaService;
+import br.senai.sc.editora.livro.model.utils.LivroUtil;
 import org.apache.coyote.Response;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -32,20 +34,26 @@ public class LivroController {
     private PessoaService pessoaService;
 
     @PostMapping
-    public ResponseEntity<Object> save (@RequestBody @Valid LivroDTO livroDto) {
+    public ResponseEntity<Object> save (
+            @RequestParam("livro") @Valid String livroJson,
+            @RequestParam("arquivo") MultipartFile files
+    ) {
 
-        if(livroService.existsById(livroDto.getIsbn())){
+        LivroUtil util = new LivroUtil();
+
+        Livro livro = util.convertJsonToModel(livroJson);
+
+
+        if(livroService.existsById(livro.getIsbn())){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("ISBN já cadastrado!");
         }
 
-        for(int i = 0; i < livroDto.getAutores().size(); i++){
-            if(!pessoaService.existsById(livroDto.getAutores().get(i).getCpf())){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Autor com CPF: " + livroDto.getAutores().get(i).getCpf() + " não encontrado!");
+        for(int i = 0; i < livro.getAutores().size(); i++){
+            if(!pessoaService.existsById(livro.getAutores().get(i).getCpf())){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Autor com CPF: " + livro.getAutores().get(i).getCpf() + " não encontrado!");
             }
         }
-
-        Livro livro = new Livro();
-        BeanUtils.copyProperties(livroDto, livro);
+        livro.setFile(files);
         livro.setStatus(Status.AGUARDANDO_REVISAO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(livroService.save(livro));
