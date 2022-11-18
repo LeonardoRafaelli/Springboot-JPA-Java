@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,11 +32,12 @@ public class AutenticacaoConfig extends WebSecurityConfigurerAdapter {
 
         httpSecurity.authorizeRequests()
                 // Libera o acesso sem autenticação para /login
-                .antMatchers("/login").permitAll()
+                .antMatchers(HttpMethod.POST,"/editoralivros/pessoa/{tipoPessoa}").permitAll()
                 // Determina que todas as demais rotas devem ser autenticadas
                 .anyRequest().authenticated()
-                .and().formLogin()
-                .and().csrf().disable();
+//                .and().formLogin()
+                .and().csrf().disable()
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
     }
 
